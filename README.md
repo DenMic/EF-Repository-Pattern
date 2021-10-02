@@ -1,5 +1,4 @@
 # EF Core 5 - Generic Repository Pattern
----
 
 Simple Generic Repository Pattern based on EF core 5 and Dependency Injection.
 To create any type of Repository based on the Context's DBSets.
