@@ -20,18 +20,22 @@ namespace EF_Repository_Pattern
         { }
 
         public async Task<IEnumerable<TModel>> GetListModelsAsync(
-            Expression<Func<TModel, bool>> predicate = null,
-            Expression<Func<TModel, object>> orderBy = null,
-            Expression<Func<TModel, object>>[] includes = null,
-            int? pageSize = null,
-            int? pageIndex = null
+            Expression<Func<TModel, bool>> predicate = null, 
+            Func<IQueryable<TModel>, IOrderedQueryable<TModel>> orderByFunc = null,
+            Func<IQueryable<TModel>, IIncludableQueryable<TModel, object>> includesFunc = null, 
+            int? pageSize = null, int? pageIndex = null
         )
         {
             var query = GetDbSet();
 
-            query = SetInclude(query, includes);
+            if (includesFunc != null)
+                query = includesFunc(query);
+
             query = SetWhere(query, predicate);
-            query = SetOrderBy(query, orderBy);
+
+            if(orderByFunc != null)
+                query = orderByFunc(query);
+
             query = SetPaging(query, pageIndex, pageSize);
 
             return await query.ToListAsync();
@@ -39,11 +43,13 @@ namespace EF_Repository_Pattern
 
         public async Task<TModel> GetFirstModelAsync(
             Expression<Func<TModel, bool>> predicate = null,
-            params Expression<Func<TModel, object>>[] includes)
+            Func<IQueryable<TModel>, IIncludableQueryable<TModel, object>> includesFunc = null)
         {
             var query = GetDbSet();
 
-            query = SetInclude(query, includes);
+            if (includesFunc != null)
+                query = includesFunc(query);
+
             query = SetWhere(query, predicate);
 
             return await query.FirstOrDefaultAsync();

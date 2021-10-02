@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 
@@ -30,9 +31,9 @@ namespace EF_Repository_Pattern.Base
             return queryable;
         }
 
-        protected IQueryable<TModel> SetInclude(IQueryable<TModel> query, Expression<Func<TModel, object>>[] includes)
+        protected IQueryable<TModel> SetInclude(IQueryable<TModel> query, IEnumerable<Expression<Func<TModel, object>>> includes)
         {
-            if (includes != null && includes.Length > 0)
+            if (includes != null && includes.Count() > 0)
             {
                 foreach (var inc in includes)
                     query = query.Include(inc);
