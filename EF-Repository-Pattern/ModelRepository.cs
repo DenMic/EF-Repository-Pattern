@@ -2,8 +2,10 @@
 using EF_Repository_Pattern.Interface;
 
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
@@ -12,16 +14,37 @@ namespace EF_Repository_Pattern
 {
     internal class ModelRepository<TModel> : BaseRepository<TModel>, IModelRepository<TModel> where TModel : class, new()
     {
-        public ModelRepository(DbContext dbContext, 
+        public ModelRepository(DbContext dbContext,
             bool enableTracking = false,
             bool enableSplitQuery = false) : base(dbContext, enableTracking, enableSplitQuery)
         { }
 
-        public async Task<TModel> GetFirstModelAsync(Expression<Func<TModel, bool>> predicate = null)
+        public async Task<IEnumerable<TModel>> GetListModelsAsync(
+            Expression<Func<TModel, bool>> predicate = null,
+            Expression<Func<TModel, object>> orderBy = null,
+            Expression<Func<TModel, object>>[] includes = null,
+            int? pageSize = null,
+            int? pageIndex = null
+        )
         {
             var query = GetDbSet();
 
-            if (predicate != null) query = query.Where(predicate);
+            query = SetInclude(query, includes);
+            query = SetWhere(query, predicate);
+            query = SetOrderBy(query, orderBy);
+            query = SetPaging(query, pageIndex, pageSize);
+
+            return await query.ToListAsync();
+        }
+
+        public async Task<TModel> GetFirstModelAsync(
+            Expression<Func<TModel, bool>> predicate = null,
+            params Expression<Func<TModel, object>>[] includes)
+        {
+            var query = GetDbSet();
+
+            query = SetInclude(query, includes);
+            query = SetWhere(query, predicate);
 
             return await query.FirstOrDefaultAsync();
         }
