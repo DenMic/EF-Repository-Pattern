@@ -85,4 +85,9 @@ public class MyService {
 }
 ```
 
-
+### Support
+    
+Any help is welcome. Bug insertion, new methods to implement, code improvement...
+And don't forget, if you want to support me
+    
+<a href="https://www.buymeacoffee.com/DenMic" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
