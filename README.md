@@ -84,7 +84,31 @@ public class MyService {
     }
 }
 ```
+    
+The method to search for a pattern by key is available. To use the GetModelByKeyAsync method, the model created via the GenerateModelRepository method must inherit from IBasePropertyKey<TKey> (otherwise the method will throw an error). TKey will set the type of the property id.
 
+```C#
+public class OrderItem: IBasePropertyKey<int>
+{
+    [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    public int Id { get; set; }
+    public int OrderId { get; set; }
+}
+    
+public async Task GetExample(){
+    var repOrderItem = repositoryManager.GenerateModelRepository<OrderItem>();
+    
+    // OrderItem inherit from IBasePropertyKey<TKey> then return correct OrderItem
+    var ordItem = await repOrderItem.GetModelByKeyAsync(2);
+    
+    var repOrder = repositoryManager.GenerateModelRepository<Order>();
+    
+    // OrderItem not inherit from IBasePropertyKey<TKey> then Throw an ArgumentException
+    var ord = await repOrder.GetModelByKeyAsync((2);
+}
+```
+    
 ### Support
     
 Any help is welcome. Bug insertion, new methods to implement, code improvement...
