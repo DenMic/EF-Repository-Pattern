@@ -26,6 +26,8 @@ namespace EF_Repository_Pattern.Interface
             int? pageIndex = null
         );
 
+        Task<TModel> GetModelByKeyAsync<TKey>(TKey id);
+
         Task<TModel> GetFirstModelAsync(
             Expression<Func<TModel, bool>> predicate = null,
             Func<IQueryable<TModel>, IIncludableQueryable<TModel, object>> includesFunc = null
