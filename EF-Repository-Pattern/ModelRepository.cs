@@ -55,6 +55,23 @@ namespace EF_Repository_Pattern
             return await query.FirstOrDefaultAsync();
         }
 
+        /// <summary>
+        /// Returns the pattern that matches the passed key. 
+        /// The Model must inherit from the IBasePropertyKey<TKey> Interface.
+        /// </summary>
+        /// <typeparam name="TKey"></typeparam>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<TModel> GetModelByKeyAsync<TKey>(TKey id)
+        {
+            if (!typeof(IBasePropertyKey<TKey>).IsAssignableFrom(typeof(TModel)))
+                throw new ArgumentException($"The class does not inherit from the IBasePropertyKey<TKey> interface");
+
+            var query = (IQueryable<IBasePropertyKey<TKey>>)GetDbSet();
+
+            return (TModel)await query.Where(x => EqualityComparer<TKey>.Default.Equals(x.Id, id)).SingleOrDefaultAsync();
+        }
+
         #region Insert, Remove, Update
 
         public async Task<TModel> AddModelAsync(TModel model)
