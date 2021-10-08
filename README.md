@@ -104,7 +104,7 @@ public async Task GetExample(){
     
     var repOrder = repositoryManager.GenerateModelRepository<Order>();
     
-    // OrderItem not inherit from IBasePropertyKey<TKey> then Throw an ArgumentException
+    // Order not inherit from IBasePropertyKey<TKey> then Throw an ArgumentException
     var ord = await repOrder.GetModelByKeyAsync((2);
 }
 ```
