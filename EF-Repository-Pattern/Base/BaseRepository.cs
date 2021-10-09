@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
 
 using System;
 using System.Collections.Generic;
@@ -58,6 +59,17 @@ namespace EF_Repository_Pattern.Base
             return query;
         }
 
+        protected IQueryable<TModel> setSkipTake(IQueryable<TModel> query, int? skip, int? take)
+        {
+            if (skip.HasValue)
+                query = query.Skip(skip.Value);
+            
+            if (take.HasValue)
+                query = query.Take(take.Value);
+
+            return query;
+        }
+
         protected IQueryable<TModel> SetPaging(IQueryable<TModel> query, int? pageIndex, int? pageSize)
         {
             if (pageIndex != null && pageSize != null)
@@ -71,6 +83,24 @@ namespace EF_Repository_Pattern.Base
                 query = query
                     .Take(pageSize.Value);
             }
+
+            return query;
+        }
+
+        protected IQueryable<TModel> GenerateQueryExpression(
+            Expression<Func<TModel, bool>> predicate, 
+            Func<IQueryable<TModel>, IOrderedQueryable<TModel>> orderByFunc, 
+            Func<IQueryable<TModel>, IIncludableQueryable<TModel, object>> includesFunc)
+        {
+            var query = GetDbSet();
+
+            if (includesFunc != null)
+                query = includesFunc(query);
+
+            query = SetWhere(query, predicate);
+
+            if (orderByFunc != null)
+                query = orderByFunc(query);
 
             return query;
         }
