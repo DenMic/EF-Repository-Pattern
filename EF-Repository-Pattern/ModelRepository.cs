@@ -19,28 +19,36 @@ namespace EF_Repository_Pattern
             bool enableSplitQuery = false) : base(dbContext, enableTracking, enableSplitQuery)
         { }
 
+        /// <summary>
+        /// Returns the list that matches the predicate entered
+        /// </summary>
+        /// <param name="predicate"></param>
+        /// <param name="orderByFunc"></param>
+        /// <param name="includesFunc"></param>
+        /// <param name="pageSize"></param>
+        /// <param name="pageIndex"></param>
+        /// <returns>IEnumerable<TModel></returns>
         public async Task<IEnumerable<TModel>> GetListModelsAsync(
             Expression<Func<TModel, bool>> predicate = null, 
             Func<IQueryable<TModel>, IOrderedQueryable<TModel>> orderByFunc = null,
             Func<IQueryable<TModel>, IIncludableQueryable<TModel, object>> includesFunc = null, 
-            int? pageSize = null, int? pageIndex = null
+            int? pageSize = null, 
+            int? pageIndex = null
         )
         {
-            var query = GetDbSet();
-
-            if (includesFunc != null)
-                query = includesFunc(query);
-
-            query = SetWhere(query, predicate);
-
-            if(orderByFunc != null)
-                query = orderByFunc(query);
-
+            var query = GenerateQueryExpression(predicate, orderByFunc, includesFunc);
             query = SetPaging(query, pageIndex, pageSize);
 
             return await query.ToListAsync();
         }
 
+        /// <summary>
+        /// It takes the first pattern found based on the predicate entered.
+        /// If it finds nothing, it returns null
+        /// </summary>
+        /// <param name="predicate"></param>
+        /// <param name="includesFunc"></param>
+        /// <returns>TModel</returns>
         public async Task<TModel> GetFirstModelAsync(
             Expression<Func<TModel, bool>> predicate = null,
             Func<IQueryable<TModel>, IIncludableQueryable<TModel, object>> includesFunc = null)
@@ -51,7 +59,6 @@ namespace EF_Repository_Pattern
                 query = includesFunc(query);
 
             query = SetWhere(query, predicate);
-
             return await query.FirstOrDefaultAsync();
         }
 
@@ -61,7 +68,7 @@ namespace EF_Repository_Pattern
         /// </summary>
         /// <typeparam name="TKey"></typeparam>
         /// <param name="id"></param>
-        /// <returns></returns>
+        /// <returns>TModel</returns>
         public async Task<TModel> GetModelByKeyAsync<TKey>(TKey id)
         {
             if (!typeof(IBasePropertyKey<TKey>).IsAssignableFrom(typeof(TModel)))
