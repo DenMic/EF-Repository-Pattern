@@ -27,6 +27,10 @@ namespace EF_Repository_Pattern
             return new ModelRepository<TModel>(_dbContext, enableTracking);
         }
 
+        /// <summary>
+        /// Save context
+        /// </summary>
+        /// <returns></returns>
         public async Task<int> SaveChangesAsync()
         {
             return await _dbContext.SaveChangesAsync();
