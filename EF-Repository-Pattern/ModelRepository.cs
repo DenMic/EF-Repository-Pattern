@@ -81,34 +81,62 @@ namespace EF_Repository_Pattern
 
         #region Insert, Remove, Update
 
+        /// <summary>
+        /// Add Model in the context
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         public async Task<TModel> AddModelAsync(TModel model)
         {
             var entry = await _context.AddAsync(model);
             return entry.Entity;
         }
 
+        /// <summary>
+        /// Remove Model in the context
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         public TModel RemoveModel(TModel model)
         {
             var entry = _context.Remove(model);
             return entry.Entity;
         }
 
+        /// <summary>
+        /// Set Model to Update state in context
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         public TModel UpdateModel(TModel model)
         {
             var entry = _context.Update(model);
             return entry.Entity;
         }
 
+        /// <summary>
+        /// Add a range of Model in the context
+        /// </summary>
+        /// <param name="models"></param>
+        /// <returns></returns>
         public async Task AddModelsAsync(params TModel[] models)
         {
             await _context.AddRangeAsync(models);
         }
 
+        /// <summary>
+        /// Reove a range of Models in the context
+        /// </summary>
+        /// <param name="models"></param>
         public void RemoveModels(params TModel[] models)
         {
             _context.RemoveRange(models);
         }
 
+        /// <summary>
+        /// Update a range of Models in the context
+        /// </summary>
+        /// <param name="models"></param>
         public void UpdateModels(params TModel[] models)
         {
             _context.Update(models);
