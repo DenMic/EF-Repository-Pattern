@@ -59,6 +59,17 @@ namespace EF_Repository_Pattern.Base
             return query;
         }
 
+        protected IQueryable<TModel> setSkipTake(IQueryable<TModel> query, int? skip, int? take)
+        {
+            if (skip.HasValue)
+                query = query.Skip(skip.Value);
+            
+            if (take.HasValue)
+                query = query.Take(take.Value);
+
+            return query;
+        }
+
         protected IQueryable<TModel> SetPaging(IQueryable<TModel> query, int? pageIndex, int? pageSize)
         {
             if (pageIndex != null && pageSize != null)

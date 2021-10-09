@@ -1,5 +1,6 @@
 ﻿using EF_Repository_Pattern.Base;
 using EF_Repository_Pattern.Interface;
+using EF_Repository_Pattern.Model;
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
@@ -25,19 +26,25 @@ namespace EF_Repository_Pattern
         /// <param name="predicate"></param>
         /// <param name="orderByFunc"></param>
         /// <param name="includesFunc"></param>
-        /// <param name="pageSize"></param>
-        /// <param name="pageIndex"></param>
+        /// <param name="skip"></param>
+        /// <param name="take"></param>
         /// <returns>IEnumerable<TModel></returns>
         public async Task<IEnumerable<TModel>> GetListModelsAsync(
             Expression<Func<TModel, bool>> predicate = null, 
             Func<IQueryable<TModel>, IOrderedQueryable<TModel>> orderByFunc = null,
             Func<IQueryable<TModel>, IIncludableQueryable<TModel, object>> includesFunc = null, 
-            int? pageSize = null, 
-            int? pageIndex = null
+            int? skip = null, 
+            int? take = null
         )
         {
+            if (skip != null && skip <= 0)
+                throw new ArgumentException("Skip can't be less or equal to zero.");
+
+            if (take != null && take < 0)
+                throw new ArgumentException("Take can't be less or equal to zero.");
+
             var query = GenerateQueryExpression(predicate, orderByFunc, includesFunc);
-            query = SetPaging(query, pageIndex, pageSize);
+            query = setSkipTake(query, skip, take);
 
             return await query.ToListAsync();
         }
@@ -78,6 +85,40 @@ namespace EF_Repository_Pattern
 
             return (TModel)await query.Where(x => EqualityComparer<TKey>.Default.Equals(x.Id, id)).SingleOrDefaultAsync();
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="pageSize"></param>
+        /// <param name="pageIndex"></param>
+        /// <param name="predicate"></param>
+        /// <param name="orderByFunc"></param>
+        /// <param name="includesFunc"></param>
+        /// <returns></returns>
+        public async Task<PagerModel<TModel>> GetPagerModelAsync(
+            int pageSize,
+            int pageIndex,
+            Expression<Func<TModel, bool>> predicate = null,
+            Func<IQueryable<TModel>, IOrderedQueryable<TModel>> orderByFunc = null,
+            Func<IQueryable<TModel>, IIncludableQueryable<TModel, object>> includesFunc = null
+        )
+        {
+            if (pageSize <= 0)
+                throw new ArgumentException("Page size can't be less or equal to zero.");
+
+            if (pageIndex < 0)
+                throw new ArgumentException("Page index can't be less or equal to zero.");
+
+            var query = GenerateQueryExpression(predicate, orderByFunc, includesFunc);
+            
+            var totalCount = query.Count();
+
+            query = SetPaging(query, pageIndex, pageSize);
+            var listModels = await query.ToListAsync();
+
+            return new PagerModel<TModel>(pageIndex, pageSize, totalCount, listModels);
+        }
+
 
         #region Insert, Remove, Update
 
