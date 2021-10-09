@@ -1,11 +1,11 @@
 # EF Core 5 - Generic Repository Pattern
 
-Simple Generic Repository Pattern based on EF core 5 and Dependency Injection.
-To create any type of Repository based on the Context's DBSets.
+Simple _**Generic Repository Pattern**_ based on _**EF core 5**_ and _**Dependency Injection**_.
+To create any type of Repository based on the _**Context's DBSets**_.
 
 ### How to use
 
-In Sturtup after calling AddDbContext<TContext> you can call AddEFRepositoryPattern<TContext>()
+In Sturtup after calling `AddDbContext<TContext>` you can call `AddEFRepositoryPattern<TContext>()`
 
 ```C#
 public void ConfigureServices(IServiceCollection services)
@@ -85,7 +85,7 @@ public class MyService {
 }
 ```
     
-The method to search for a pattern by key is available. To use the GetModelByKeyAsync method, the model created via the GenerateModelRepository method must inherit from IBasePropertyKey<TKey> (otherwise the method will throw an error). TKey will set the type of the property id.
+The method to search for a pattern by key is available. To use the `GetModelByKeyAsync` method, the model created via the `GenerateModelRepository` method must inherit from `IBasePropertyKey<TKey>` (otherwise the method will throw an error). `TKey` will set the type of the property id.
 
 ```C#
 public class OrderItem: IBasePropertyKey<int>
@@ -110,8 +110,8 @@ public async Task GetExample(){
 ```
     
 ### Pager
-Since version 1.1 I have added a GetPagerModelAsync method, which returns a PagerModel<TModel> where TModel is the type model of the repository class.
-The PagerModel class is composed as follows:
+Since version 1.1 I have added a `GetPagerModelAsync` method, which returns a `PagerModel<TModel>` where `TModel` is the type model of the repository class.
+The `PagerModel` class is composed as follows:
     
 ```C#
 int PageIndex --> index of the page 
