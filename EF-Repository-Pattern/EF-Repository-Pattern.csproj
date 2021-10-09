@@ -7,7 +7,7 @@
     <Description>Simple Generic Repository Pattern based on EF core 5 and Dependency Injection. To create any type of Repository based on the Context's DBSets.</Description>
     <PackageProjectUrl>https://github.com/DenMic/EF-Repository-Pattern</PackageProjectUrl>
     <RepositoryUrl>https://github.com/DenMic/EF-Repository-Pattern</RepositoryUrl>
-    <Version>1.0.1</Version>
+    <Version>1.1.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
