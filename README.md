@@ -109,6 +109,17 @@ public async Task GetExample(){
 }
 ```
     
+### Pager
+Since version 1.1 I have added a GetPagerModelAsync method, which returns a PagerModel<TModel> where TModel is the type model of the repository class.
+The PagerModel class is composed as follows:
+    
+```C#
+int PageIndex --> index of the page 
+int PageSize --> size of the page
+long TotalCount --> number of total element without page
+IEnumerable<TModel> ListModels --> list of Models found
+```
+    
 ### Support
     
 Any help is welcome. Bug insertion, new methods to implement, code improvement...
