@@ -1,6 +1,6 @@
-# EF Core 5 - Generic Repository Pattern
+# EF Core 6 - Generic Repository Pattern
 
-Simple _**Generic Repository Pattern**_ based on _**EF core 5**_ and _**Dependency Injection**_.
+Simple _**Generic Repository Pattern**_ based on _**EF core 6**_ and _**Dependency Injection**_.
 To create any type of Repository based on the _**Context's DBSets**_.
 
 ### How to use
