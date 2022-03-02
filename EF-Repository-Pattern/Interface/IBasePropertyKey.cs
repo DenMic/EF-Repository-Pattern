@@ -1,7 +1,6 @@
-﻿namespace EF_Repository_Pattern.Interface
+﻿namespace EF_Repository_Pattern.Interface;
+
+public interface IBasePropertyKey<Tkey>
 {
-    public interface IBasePropertyKey<Tkey>
-    {
-        public Tkey Id { get; set; }
-    }
+    public Tkey Id { get; set; }
 }
