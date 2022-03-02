@@ -15,6 +15,7 @@ public void ConfigureServices(IServiceCollection services)
         options.UseInMemoryDatabase(databaseName: $"Select");
     });
 
+    // You can use any type of Context. For ease we have used an inMemory
     services.AddEFRepositoryPattern<MyContext>();
 
     ...
@@ -28,6 +29,7 @@ public class MyContext : DbContext
 ```
 
 That's all, now you can use all reporitory you want only doing this
+
 ```C#
 public class MyService {
     private readonly IRepositoryManager<MyContext> repositoryManager;
@@ -37,14 +39,23 @@ public class MyService {
         this.repositoryManager = repositoryManager;
     }
 
-    public async Task AddSaveChanges()
+    public async Task AddCustomer()
     {
         // Create your Repository of Type Customer
         var repCustomer = repositoryManager.GenerateModelRepository<Customer>();
+
         var bCustomer = new Customer() { Id = 1, City = "New York", FirstName = "Liam" };
+        await repCustomer.AddModelAsync(bCustomer);
+
+        await repositoryManager.SaveChangesAsync();
+    }
+
+    public async Task AddDifferentEntitiesInOneTransaction()
+    {
+        // Create your Repository of Type Customer
+        var repCustomer = repositoryManager.GenerateModelRepository<Customer>();
 
         // Adding some customers to DBSet
-        await repCustomer.AddModelAsync(bCustomer);
         await repCustomer.AddModelAsync(new Customer() { Id = 2, City = "San Diego", FirstName = "Liam" });
         await repCustomer.AddModelAsync(new Customer() { Id = 3, City = "Los Angeles" });
         await repCustomer.AddModelAsync(new Customer() { Id = 5, City = "New York", FirstName = "Noah" });
@@ -62,16 +73,16 @@ public class MyService {
         await repositoryManager.SaveChangesAsync();
     }
 
-    public async Task Get()
+    public async Task GetCustomer()
     {
         // Create your Repository of Type Customer
         var repCustomer = repositoryManager.GenerateModelRepository<Customer>();
 
         // Get First Customer where City == "New York"
-        var b = await repCustomer.GetFirstModelAsync(x => x.City == "New York");
+        var customer = await repCustomer.GetFirstModelAsync(x => x.City == "New York");
 
         // Get List of Customers where FirstName == Liam orderedBy City and include Orders
-        var c = await repCustomer.GetListModelsAsync(
+        var customers = await repCustomer.GetListModelsAsync(
             x => x.FirstName == "Liam",
             x => x.OrderBy(y => y.City),
             x => x.Include(y => y.Orders)
